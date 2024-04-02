@@ -14,6 +14,7 @@ type Config struct {
 	DBPassword string
 	DBAddress  string
 	DBName     string
+	DBPort     string
 	SSLMode    string
 }
 
@@ -28,6 +29,7 @@ func InitConfig() Config {
 		DBPassword: getEnv("DB_PASSWORD", "default123"),
 		DBAddress:  fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "5432")),
 		DBName:     getEnv("DB_NAME", "api-test"),
+		DBPort:     getEnv("DB_PORT", "5432"),
 		SSLMode:    getEnv("SSL_MODE", "require"),
 	}
 }

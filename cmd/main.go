@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/Winterson-Islary/jwt-golang.git/cmd/api"
-	"github.com/Winterson-Islary/jwt-golang.git/cmd/config"
-	"github.com/Winterson-Islary/jwt-golang.git/cmd/db"
+	"github.com/Winterson-Islary/jwt-golang.git/config"
+	"github.com/Winterson-Islary/jwt-golang.git/db"
 )
 
 func main() {

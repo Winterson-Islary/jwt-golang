@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Winterson-Islary/jwt-golang.git/types"
@@ -9,10 +10,11 @@ import (
 )
 
 type Handler struct {
+	store types.UserStore
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(store types.UserStore) *Handler {
+	return &Handler{store: store}
 }
 
 func (handler *Handler) RegisterRoutes(router *mux.Router) {
@@ -31,4 +33,21 @@ func (handler *Handler) HandleRegister(res http.ResponseWriter, req *http.Reques
 		utils.WriteError(res, http.StatusBadRequest, err)
 	}
 
+	_, err := handler.store.GetUserByEmail(payload.Email)
+	if err != nil {
+		utils.WriteError(res, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", payload.Email))
+		return
+	}
+	err = handler.store.CreateUser(types.User{
+		FirstName: payload.FirstName,
+		LastName:  payload.LastName,
+		Email:     payload.Email,
+		Password:  payload.Password,
+	})
+	if err != nil {
+		utils.WriteError(res, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(res, http.StatusCreated, nil)
 }

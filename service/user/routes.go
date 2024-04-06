@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Winterson-Islary/jwt-golang.git/service/auth"
 	"github.com/Winterson-Islary/jwt-golang.git/types"
 	"github.com/Winterson-Islary/jwt-golang.git/utils"
 	"github.com/gorilla/mux"
@@ -38,11 +39,17 @@ func (handler *Handler) HandleRegister(res http.ResponseWriter, req *http.Reques
 		utils.WriteError(res, http.StatusBadRequest, fmt.Errorf("user with email %s already exists", payload.Email))
 		return
 	}
+
+	hashedPassword, err := auth.HashPassword(payload.Password)
+	if err != nil {
+		utils.WriteError(res, http.StatusInternalServerError, err)
+		return
+	}
 	err = handler.store.CreateUser(types.User{
 		FirstName: payload.FirstName,
 		LastName:  payload.LastName,
 		Email:     payload.Email,
-		Password:  payload.Password,
+		Password:  hashedPassword,
 	})
 	if err != nil {
 		utils.WriteError(res, http.StatusInternalServerError, err)

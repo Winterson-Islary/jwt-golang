@@ -7,6 +7,7 @@ import (
 	"github.com/Winterson-Islary/jwt-golang.git/service/auth"
 	"github.com/Winterson-Islary/jwt-golang.git/types"
 	"github.com/Winterson-Islary/jwt-golang.git/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
 )
 
@@ -30,8 +31,14 @@ func (handler *Handler) HandleLogin(res http.ResponseWriter, req *http.Request) 
 func (handler *Handler) HandleRegister(res http.ResponseWriter, req *http.Request) {
 
 	var payload types.RegisterUserPayload
-	if err := utils.ParseJSON(req, payload); err != nil {
+	if err := utils.ParseJSON(req, &payload); err != nil {
 		utils.WriteError(res, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(res, http.StatusBadRequest, fmt.Errorf("invalid payload %v", errors))
 		return
 	}
 

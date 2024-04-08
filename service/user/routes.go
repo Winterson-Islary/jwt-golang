@@ -32,6 +32,7 @@ func (handler *Handler) HandleRegister(res http.ResponseWriter, req *http.Reques
 	var payload types.RegisterUserPayload
 	if err := utils.ParseJSON(req, payload); err != nil {
 		utils.WriteError(res, http.StatusBadRequest, err)
+		return
 	}
 
 	_, err := handler.store.GetUserByEmail(payload.Email)

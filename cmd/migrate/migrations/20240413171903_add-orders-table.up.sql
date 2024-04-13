@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS orders (
+	id INT CHECK (id > 0) NOT NULL GENERATED ALWAYS AS IDENTITY,
+	userId INT CHECK (userId > 0) NOT NULL,
+	total DECIMAL(10, 2) NOT NULL,
+	status VARCHAR(30) CHECK (STATUS IN ('pending', 'completed', 'cancelled')) NOT NULL DEFAULT 'pending',
+	address TEXT NOT NULL,
+	createdAt TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+	PRIMARY KEY (id),
+	FOREIGN KEY (userId) REFERENCES users(id)
+);

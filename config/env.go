@@ -18,6 +18,7 @@ type Config struct {
 	DBPort                 string
 	SSLMode                string
 	JWTExpirationInSeconds int64
+	JWTSecret              string
 }
 
 var Envs = InitConfig()
@@ -34,6 +35,7 @@ func InitConfig() Config {
 		DBPort:                 getEnv("DB_PORT", "5432"),
 		SSLMode:                getEnv("SSL_MODE", "require"),
 		JWTExpirationInSeconds: getEnvAsInt("JWT_EXP", 3600*24*7),
+		JWTSecret:              getEnv("JWT_SECRET", "enter-your-secret"),
 	}
 }
 

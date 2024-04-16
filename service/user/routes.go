@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/Winterson-Islary/jwt-golang.git/config"
 	"github.com/Winterson-Islary/jwt-golang.git/service/auth"
 	"github.com/Winterson-Islary/jwt-golang.git/types"
 	"github.com/Winterson-Islary/jwt-golang.git/utils"
@@ -45,9 +46,17 @@ func (handler *Handler) HandleLogin(res http.ResponseWriter, req *http.Request) 
 	}
 	if !auth.ComparePasswords(user.Password, []byte(payload.Password)) {
 		utils.WriteError(res, http.StatusBadRequest, fmt.Errorf("not found, invalid email or password"))
+		return
 	}
 
-	utils.WriteJSON(res, http.StatusOK, map[string]string{"token": ""})
+	secret := []byte(config.Envs.JWTSecret)
+	token, err := auth.CreateJWT(secret, user.ID)
+	if err != nil {
+		utils.WriteError(res, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(res, http.StatusOK, map[string]string{"token": token})
 }
 
 // * Handling User Registration

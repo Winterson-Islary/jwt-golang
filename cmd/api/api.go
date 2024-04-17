@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/Winterson-Islary/jwt-golang.git/service/product"
 	"github.com/Winterson-Islary/jwt-golang.git/service/user"
 	"github.com/gorilla/mux"
 )
@@ -28,6 +29,11 @@ func (server *APIServer) Run() error {
 	userStore := user.NewStore(server.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(sub_router)
+	// PRODUCTs Handler
+	productStore := product.NewStore(server.db)
+	productHandler := product.NewHandler(productStore)
+	productHandler.RegisterRoutes(sub_router)
+
 	log.Println("Listening On: ", server.addr)
 	return http.ListenAndServe(server.addr, router)
 }

@@ -31,6 +31,11 @@ func (store *Store) GetProducts() ([]types.Product, error) {
 	return products, nil
 }
 
+// TODO: Implement
+func (store *Store) GetProductByIDs(PIDs []int) ([]types.Product, error) {
+	return nil, nil
+}
+
 func scanRowsIntoProduct(rows *sql.Rows) (*types.Product, error) {
 	product := new(types.Product)
 

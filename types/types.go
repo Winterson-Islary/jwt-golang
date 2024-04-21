@@ -43,7 +43,7 @@ type Product struct {
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
-type CartStore interface {
+type OrderStore interface {
 	CreateOrder(Order) (int, error)
 	CreateOrderItem(OrderItem) error
 }

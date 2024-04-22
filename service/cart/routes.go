@@ -35,4 +35,7 @@ func (handler *Handler) HandleCheckout(res http.ResponseWriter, req *http.Reques
 		utils.WriteError(res, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 		return
 	}
+
+	//TODO: Implement
+	prodStore, err := handler.productStore.GetProductByIDs(productIds)
 }

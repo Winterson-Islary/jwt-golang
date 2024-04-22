@@ -33,6 +33,7 @@ func (server *APIServer) Run() error {
 	productStore := product.NewStore(server.db)
 	productHandler := product.NewHandler(productStore)
 	productHandler.RegisterRoutes(sub_router)
+	// CART Handler
 
 	log.Println("Listening On: ", server.addr)
 	return http.ListenAndServe(server.addr, router)

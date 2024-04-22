@@ -2,8 +2,10 @@ package product
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/Winterson-Islary/jwt-golang.git/types"
+	"github.com/Winterson-Islary/jwt-golang.git/utils"
 )
 
 type Store struct {
@@ -31,9 +33,31 @@ func (store *Store) GetProducts() ([]types.Product, error) {
 	return products, nil
 }
 
-// TODO: Implement
 func (store *Store) GetProductByIDs(PIDs []int) ([]types.Product, error) {
-	return nil, nil
+	placeholders := utils.GetIDPlaceholders(PIDs)
+	query := fmt.Sprintf("SELECT * FROM product WHERE id IN (%s)", placeholders)
+
+	// Converting PIDs (Product IDs) to []interface{}, ig to give each product some methods
+	args := make([]interface{}, len(PIDs))
+	for index, item := range PIDs {
+		args[index] = item
+	}
+
+	rows, err := store.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	products := []types.Product{}
+	for rows.Next() {
+		prod, err := scanRowsIntoProduct(rows)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, *prod)
+	}
+
+	return products, nil
 }
 
 func scanRowsIntoProduct(rows *sql.Rows) (*types.Product, error) {

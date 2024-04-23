@@ -17,3 +17,34 @@ func GetCartItemsIDs(items []types.CartItem) ([]int, error) {
 
 	return productIds, nil
 }
+
+func (handler *Handler) CreateOrder(products []types.Product, items []types.CartItem, userID int) (int, float64, error) {
+	productMap := make(map[int]types.Product)
+	for _, product := range products {
+		productMap[product.ID] = product
+	}
+	if err := CheckItemInStock(items, productMap); err != nil {
+		return 0, 0, err
+	}
+
+	// TODO: Implement total price calculator and product quantity update in db etc.
+	return 0, 0, nil
+}
+
+func CheckItemInStock(items []types.CartItem, products map[int]types.Product) error {
+
+	if len(items) == 0 {
+		return fmt.Errorf("cart is empty")
+	}
+
+	for _, item := range items {
+		product, ok := products[item.ProductID]
+		if !ok {
+			return fmt.Errorf("product %d is not available in the store, please refresh your cart", item.ProductID)
+		}
+		if product.Quantity < item.Quantity {
+			return fmt.Errorf("product %s is not available in the quantity requested", product.Name)
+		}
+	}
+	return nil
+}

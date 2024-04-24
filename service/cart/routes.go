@@ -24,6 +24,8 @@ func (handler *Handler) RegisterRoutes(router *mux.Router) {
 }
 
 func (handler *Handler) HandleCheckout(res http.ResponseWriter, req *http.Request) {
+	userID := 0 //TODO: WILL GET FROM JWT
+
 	var cart types.CartCheckoutPayload
 	if err := utils.ParseJSON(req, &cart); err != nil {
 		utils.WriteError(res, http.StatusBadRequest, err)
@@ -41,6 +43,13 @@ func (handler *Handler) HandleCheckout(res http.ResponseWriter, req *http.Reques
 		utils.WriteError(res, http.StatusBadRequest, err)
 		return
 	}
-	//TODO: Implement
+
 	prodStore, err := handler.productStore.GetProductByIDs(productIds)
+	if err != nil {
+		utils.WriteError(res, http.StatusInternalServerError, err)
+		return
+	}
+
+	orderID, totalPrice, err := handler.CreateOrder(prodStore, cart.Items, userID)
+
 }

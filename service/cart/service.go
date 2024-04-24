@@ -29,14 +29,33 @@ func (handler *Handler) CreateOrder(products []types.Product, items []types.Cart
 
 	totalPrice := CalculateTotalPrice(items, productMap)
 
-	// !NAIVE IMPLEMENTATION: Updating Stock (DATA INCONSISTENCIES)
+	//! NAIVE IMPLEMENTATION: Updating Stock (CAN CAUSE DATA INCONSISTENCIES)
 	for _, item := range items {
 		product := productMap[item.ProductID]
 		product.Quantity -= item.Quantity
 		handler.productStore.UpdateProduct(product)
 	}
+	//? Marked For Refactoring
+	orderID, err := handler.store.CreateOrder(types.Order{
+		UserID:  userID,
+		Total:   totalPrice,
+		Status:  "pending",
+		Address: "HardCoded Address: Improvements Required",
+	})
+	if err != nil {
+		return 0, 0, err
+	}
 
-	return 0, 0, nil
+	for _, item := range items {
+		handler.store.CreateOrderItem(types.OrderItem{
+			OrderID:   orderID,
+			ProductID: item.ProductID,
+			Quantity:  item.Quantity,
+			Price:     productMap[item.ProductID].Price,
+		})
+	}
+
+	return orderID, totalPrice, nil
 }
 
 func CheckItemInStock(items []types.CartItem, products map[int]types.Product) error {

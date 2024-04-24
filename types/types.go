@@ -31,7 +31,8 @@ type UserStore interface {
 
 type ProductStore interface {
 	GetProducts() ([]Product, error)
-	GetProductByIDs(pd []int) ([]Product, error)
+	GetProductByIDs([]int) ([]Product, error)
+	UpdateProduct(Product) error
 }
 
 type Product struct {

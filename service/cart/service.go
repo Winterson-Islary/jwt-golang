@@ -27,8 +27,15 @@ func (handler *Handler) CreateOrder(products []types.Product, items []types.Cart
 		return 0, 0, err
 	}
 
-	// TODO: Implement total price calculator and product quantity update in db etc.
 	totalPrice := CalculateTotalPrice(items, productMap)
+
+	// !NAIVE IMPLEMENTATION: Updating Stock (DATA INCONSISTENCIES)
+	for _, item := range items {
+		product := productMap[item.ProductID]
+		product.Quantity -= item.Quantity
+		handler.productStore.UpdateProduct(product)
+	}
+
 	return 0, 0, nil
 }
 

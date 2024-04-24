@@ -60,6 +60,14 @@ func (store *Store) GetProductByIDs(PIDs []int) ([]types.Product, error) {
 	return products, nil
 }
 
+func (store *Store) UpdateProduct(product types.Product) error {
+	_, err := store.db.Exec("UPDATE products SET name = $1, price = $2, image = $3, description = $4, quantity = $5 WHERE id = $6", product.Name, product.Price, product.Image, product.Description, product.Quantity, product.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func scanRowsIntoProduct(rows *sql.Rows) (*types.Product, error) {
 	product := new(types.Product)
 

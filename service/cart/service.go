@@ -28,6 +28,7 @@ func (handler *Handler) CreateOrder(products []types.Product, items []types.Cart
 	}
 
 	// TODO: Implement total price calculator and product quantity update in db etc.
+	totalPrice := CalculateTotalPrice(items, productMap)
 	return 0, 0, nil
 }
 
@@ -47,4 +48,13 @@ func CheckItemInStock(items []types.CartItem, products map[int]types.Product) er
 		}
 	}
 	return nil
+}
+
+func CalculateTotalPrice(cartItems []types.CartItem, products map[int]types.Product) float64 {
+	var total float64
+	for _, item := range cartItems {
+		product := products[item.ProductID]
+		total += float64(item.Quantity) * product.Price
+	}
+	return total
 }

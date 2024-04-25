@@ -13,6 +13,7 @@ import (
 type Handler struct {
 	store        types.OrderStore
 	productStore types.ProductStore
+	userStore    types.UserStore
 }
 
 func (handler *Handler) NewHandler(store types.OrderStore, productStore types.ProductStore) *Handler {
@@ -20,7 +21,7 @@ func (handler *Handler) NewHandler(store types.OrderStore, productStore types.Pr
 }
 
 func (handler *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/cart/checkout", handler.HandleCheckout).Methods(http.MethodPost)
+	router.HandleFunc("/cart/checkout", auth.WithJWTAuth(handler.HandleCheckout, handler.userStore)).Methods(http.MethodPost)
 }
 
 func (handler *Handler) HandleCheckout(res http.ResponseWriter, req *http.Request) {

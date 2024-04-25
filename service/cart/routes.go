@@ -51,5 +51,14 @@ func (handler *Handler) HandleCheckout(res http.ResponseWriter, req *http.Reques
 	}
 
 	orderID, totalPrice, err := handler.CreateOrder(prodStore, cart.Items, userID)
+	if err != nil {
+		utils.WriteError(res, http.StatusBadRequest, err)
+		return
+	}
+
+	utils.WriteJSON(res, http.StatusOK, map[string]any{
+		"total_price": totalPrice,
+		"order_id":    orderID,
+	})
 
 }
